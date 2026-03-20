@@ -1,6 +1,3 @@
-# Smile_Please
-This is our readme file for DevTrails Phase I 2026. We have come up with an offline video recording app implemented using geotag, timestamps, and anti-AI features. Each upload will trigger a unique prompt for the user to perform in order to rule out as many frauds as possible.
-
 Adversarial Defense & Anti-Spoofing Strategy
 This section outlines our platform's approach to detecting and preventing coordinated GPS-spoofing fraud by delivery partners. Our strategy is built on a single core principle: no single signal is foolproof, but making a fraudster defeat all layers simultaneously — at scale, in real time — is practically impossible.
 The four pillars below are ordered by when they execute in the claim submission pipeline — from the moment the worker opens the claim screen to the moment our server processes it.
