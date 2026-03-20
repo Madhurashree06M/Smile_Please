@@ -163,7 +163,7 @@ Our **offline-first architecture** is designed to handle this seamlessly:
 - **Tamper Resistance**  
   - Signals are **locked locally once captured**  
   - Upload delay actually **strengthens trust** by preventing post-hoc manipulation  
-
+```
 ---
 
 ### 🔹 Key Insight
