@@ -136,7 +136,6 @@ No worker is ever permanently penalized based solely on an algorithmic flag — 
 ### 🔹 Key Principle
 
 > A genuine worker with a broken device, poor connectivity, or an unusual work location should **never permanently lose access** to the platform.  
->  
 > **Speed for the honest majority. Friction for bad actors.**
 
 ---
