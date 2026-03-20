@@ -75,7 +75,7 @@ Every signal we collect beyond basic GPS coordinates — and why we chose it.
 
 ### 🔹 Data Collection Pipeline
 
-```text```
+```text
         ┌────────────────────────┐
         │   User Submission      │
         │ (Video + Location)     │
@@ -109,7 +109,7 @@ Every signal we collect beyond basic GPS coordinates — and why we chose it.
         │                        │
         │  ✔ Accept / Reject     │
         └────────────────────────┘
-
+```
         ---
 
 ## 3. The UX Balance
