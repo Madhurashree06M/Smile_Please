@@ -75,7 +75,7 @@ Every signal we collect beyond basic GPS coordinates — and why we chose it.
 
 ### 🔹 Data Collection Pipeline
 
-```text
+```text```
         ┌────────────────────────┐
         │   User Submission      │
         │ (Video + Location)     │
@@ -163,7 +163,6 @@ Our **offline-first architecture** is designed to handle this seamlessly:
 - **Tamper Resistance**  
   - Signals are **locked locally once captured**  
   - Upload delay actually **strengthens trust** by preventing post-hoc manipulation  
-```
 ---
 
 ### 🔹 Key Insight
