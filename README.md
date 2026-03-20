@@ -110,7 +110,7 @@ Every signal we collect beyond basic GPS coordinates — and why we chose it.
         │  ✔ Accept / Reject     │
         └────────────────────────┘
 ```
-        ---
+---
 
 ## 3. The UX Balance
 
