@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WorkerShield — Register</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:        #0d1117;
+      --paper:      #f7f5f0;
+      --accent:     #e8521a;
+      --accent2:    #f5a623;
+      --muted:      #7a7670;
+      --line:       rgba(13,17,23,0.12);
+      --card-bg:    #ffffff;
+      --success:    #1a9e5c;
+      --radius:     16px;
+      --transition: 0.3s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background-color: var(--paper);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Background texture */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image:
+        radial-gradient(circle at 15% 85%, rgba(232,82,26,0.08) 0%, transparent 45%),
+        radial-gradient(circle at 85% 15%, rgba(245,166,35,0.10) 0%, transparent 45%),
+        url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%230d1117' fill-opacity='0.025'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .page-layout {
+      display: flex;
+      gap: 0;
+      width: 100%;
+      max-width: 900px;
+      background: var(--card-bg);
+      border-radius: 24px;
+      box-shadow: 0 8px 60px rgba(13,17,23,0.12), 0 2px 8px rgba(13,17,23,0.06);
+      overflow: hidden;
+      position: relative;
+      z-index: 1;
+      animation: slideUp 0.6s cubic-bezier(0.4,0,0.2,1) both;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── LEFT PANEL ── */
+    .panel-left {
+      flex: 0 0 340px;
+      background: var(--ink);
+      padding: 48px 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .panel-left::before {
+      content: '';
+      position: absolute;
+      top: -80px; right: -80px;
+      width: 260px; height: 260px;
+      background: radial-gradient(circle, rgba(232,82,26,0.35) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .panel-left::after {
+      content: '';
+      position: absolute;
+      bottom: -60px; left: -60px;
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(245,166,35,0.2) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .brand {
+      position: relative; z-index: 1;
+    }
+
+    .brand-logo {
+      width: 44px; height: 44px;
+      background: var(--accent);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 20px;
+      font-size: 22px;
+    }
+
+    .brand-name {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 22px;
+      color: #ffffff;
+      letter-spacing: -0.3px;
+    }
+
+    .brand-sub {
+      font-size: 13px;
+      color: rgba(255,255,255,0.45);
+      margin-top: 4px;
+      font-weight: 300;
+    }
+
+    .panel-copy {
+      position: relative; z-index: 1;
+    }
+
+    .panel-copy h2 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 28px;
+      line-height: 1.25;
+      color: #ffffff;
+      margin-bottom: 16px;
+    }
+
+    .panel-copy h2 span {
+      color: var(--accent);
+    }
+
+    .panel-copy p {
+      font-size: 14px;
+      color: rgba(255,255,255,0.5);
+      line-height: 1.65;
+      font-weight: 300;
+    }
+
+    .features-list {
+      list-style: none;
+      position: relative; z-index: 1;
+    }
+
+    .features-list li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: rgba(255,255,255,0.6);
+      padding: 6px 0;
+      border-top: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .features-list li:first-child { border-top: none; }
+
+    .feat-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent2);
+      flex-shrink: 0;
+    }
+
+    /* ── RIGHT PANEL ── */
+    .panel-right {
+      flex: 1;
+      padding: 48px 44px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .form-header {
+      margin-bottom: 32px;
+    }
+
+    .form-header h1 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 26px;
+      color: var(--ink);
+      letter-spacing: -0.5px;
+    }
+
+    .form-header p {
+      font-size: 14px;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      animation: fadeIn 0.5s both;
+    }
+
+    .field:nth-child(1) { animation-delay: 0.05s; }
+    .field:nth-child(2) { animation-delay: 0.10s; }
+    .field:nth-child(3) { animation-delay: 0.15s; }
+    .field:nth-child(4) { animation-delay: 0.20s; }
+    .field:nth-child(5) { animation-delay: 0.25s; }
+    .field:nth-child(6) { animation-delay: 0.30s; }
+    .field:nth-child(7) { animation-delay: 0.35s; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .field.full { grid-column: 1 / -1; }
+
+    label {
+      font-size: 11.5px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    .input-wrap .icon {
+      position: absolute;
+      left: 13px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 15px;
+      pointer-events: none;
+      opacity: 0.45;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 11px 12px 11px 36px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      color: var(--ink);
+      background: var(--paper);
+      border: 1.5px solid var(--line);
+      border-radius: 10px;
+      outline: none;
+      transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
+      appearance: none;
+    }
+
+    input::placeholder { color: rgba(13,17,23,0.3); }
+
+    input:focus, select:focus {
+      border-color: var(--accent);
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(232,82,26,0.1);
+    }
+
+    .select-wrap::after {
+      content: '▾';
+      position: absolute;
+      right: 13px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 12px;
+      color: var(--muted);
+      pointer-events: none;
+    }
+
+    /* Zone badge row */
+    .zone-row {
+      grid-column: 1 / -1;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .zone-badge {
+      padding: 7px 14px;
+      border-radius: 8px;
+      border: 1.5px solid var(--line);
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all var(--transition);
+      background: var(--paper);
+      user-select: none;
+    }
+
+    .zone-badge:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .zone-badge.active {
+      border-color: var(--accent);
+      background: rgba(232,82,26,0.08);
+      color: var(--accent);
+    }
+
+    .zone-label {
+      font-size: 11.5px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 2px;
+      grid-column: 1 / -1;
+    }
+
+    /* Premium preview card */
+    .premium-preview {
+      grid-column: 1 / -1;
+      background: linear-gradient(135deg, var(--ink) 0%, #1e2630 100%);
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 4px;
+    }
+
+    .premium-preview .label {
+      font-size: 12px;
+      color: rgba(255,255,255,0.5);
+      font-weight: 300;
+    }
+
+    .premium-preview .amount {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 22px;
+      color: #fff;
+    }
+
+    .premium-preview .amount span {
+      font-size: 13px;
+      color: rgba(255,255,255,0.5);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+    }
+
+    .premium-tag {
+      font-size: 11px;
+      background: rgba(232,82,26,0.25);
+      color: #ff8c61;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+
+    /* Submit */
+    .submit-btn {
+      grid-column: 1 / -1;
+      padding: 14px;
+      background: var(--accent);
+      color: #fff;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+      letter-spacing: 0.2px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .submit-btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .submit-btn:hover {
+      background: #d44413;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(232,82,26,0.35);
+    }
+
+    .submit-btn:active { transform: translateY(0); }
+
+    .submit-btn.loading {
+      pointer-events: none;
+      opacity: 0.8;
+    }
+
+    /* Success overlay */
+    .success-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(13,17,23,0.6);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .success-overlay.show { display: flex; }
+
+    .success-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 40px;
+      text-align: center;
+      max-width: 340px;
+      animation: popIn 0.4s cubic-bezier(0.4,0,0.2,1) both;
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.85); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    .success-icon {
+      width: 64px; height: 64px;
+      background: rgba(26,158,92,0.1);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 30px;
+      margin: 0 auto 16px;
+    }
+
+    .success-card h3 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 20px;
+      color: var(--ink);
+      margin-bottom: 8px;
+    }
+
+    .success-card p {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .error-msg {
+      font-size: 11.5px;
+      color: #c0392b;
+      margin-top: 2px;
+      display: none;
+    }
+
+    .field.error input,
+    .field.error select {
+      border-color: #c0392b;
+      box-shadow: 0 0 0 3px rgba(192,57,43,0.1);
+    }
+
+    .field.error .error-msg { display: block; }
+
+    /* Responsive */
+    @media (max-width: 720px) {
+      .page-layout { flex-direction: column; max-width: 440px; }
+      .panel-left { flex: none; padding: 32px 28px; }
+      .panel-right { padding: 32px 28px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .field.full { grid-column: 1; }
+      .zone-row, .premium-preview, .submit-btn { grid-column: 1; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-layout">
+
+  <!-- LEFT PANEL -->
+  <div class="panel-left">
+    <div class="brand">
+      <div class="brand-logo">🛡️</div>
+      <div class="brand-name">WorkerShield</div>
+      <div class="brand-sub">Income Protection Platform</div>
+    </div>
+
+    <div class="panel-copy">
+      <h2>Protect your <span>income</span>, not just your work.</h2>
+      <p>Hyper-local insurance for gig workers with AI-powered premiums and zero-touch claims.</p>
+    </div>
+
+    <ul class="features-list">
+      <li><span class="feat-dot"></span> Dynamic weekly premiums from ₹18</li>
+      <li><span class="feat-dot"></span> Auto-claim on weather disruptions</li>
+      <li><span class="feat-dot"></span> Zone-based risk scoring</li>
+      <li><span class="feat-dot"></span> Coverage active within minutes</li>
+    </ul>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="panel-right">
+    <div class="form-header">
+      <h1>Create your account</h1>
+      <p>Takes 60 seconds. Coverage starts immediately.</p>
+    </div>
+
+    <div class="form-grid" id="regForm">
+
+      <!-- Full Name -->
+      <div class="field" id="field-name">
+        <label>Full Name</label>
+        <div class="input-wrap">
+          <span class="icon">👤</span>
+          <input type="text" id="name" placeholder="e.g. Arjun Sharma" autocomplete="name"/>
+        </div>
+        <span class="error-msg">Please enter your full name</span>
+      </div>
+
+      <!-- Phone -->
+      <div class="field" id="field-phone">
+        <label>Phone Number</label>
+        <div class="input-wrap">
+          <span class="icon">📱</span>
+          <input type="tel" id="phone" placeholder="10-digit mobile" maxlength="10" autocomplete="tel"/>
+        </div>
+        <span class="error-msg">Enter a valid 10-digit number</span>
+      </div>
+
+      <!-- City -->
+      <div class="field" id="field-city">
+        <label>City</label>
+        <div class="input-wrap">
+          <span class="icon">🏙️</span>
+          <input type="text" id="city" placeholder="e.g. Bengaluru" autocomplete="address-level2"/>
+        </div>
+        <span class="error-msg">Please enter your city</span>
+      </div>
+
+      <!-- Platform -->
+      <div class="field" id="field-type">
+        <label>Delivery Platform</label>
+        <div class="input-wrap select-wrap">
+          <span class="icon">🛵</span>
+          <select id="type" onchange="updatePremium()">
+            <option value="">Select platform</option>
+            <option value="Swiggy">Swiggy</option>
+            <option value="Zomato">Zomato</option>
+            <option value="Zepto">Zepto</option>
+            <option value="Blinkit">Blinkit</option>
+            <option value="Dunzo">Dunzo</option>
+            <option value="Porter">Porter</option>
+          </select>
+        </div>
+        <span class="error-msg">Please select your platform</span>
+      </div>
+
+      <!-- Job Role — NEW: required for policy type -->
+      <div class="field" id="field-role">
+        <label>Job Role</label>
+        <div class="input-wrap select-wrap">
+          <span class="icon">💼</span>
+          <select id="role" onchange="updatePremium()">
+            <option value="">Select role</option>
+            <option value="delivery_bike">Delivery (Bike)</option>
+            <option value="delivery_cycle">Delivery (Cycle)</option>
+            <option value="delivery_foot">Delivery (On Foot)</option>
+            <option value="pickup">Pickup Partner</option>
+          </select>
+        </div>
+        <span class="error-msg">Please select your job role</span>
+      </div>
+
+      <!-- Aadhaar (last 4) — NEW: for identity verification -->
+      <div class="field" id="field-aadhaar">
+        <label>Aadhaar (Last 4 digits)</label>
+        <div class="input-wrap">
+          <span class="icon">🪪</span>
+          <input type="text" id="aadhaar" placeholder="XXXX" maxlength="4" pattern="\d{4}"/>
+        </div>
+        <span class="error-msg">Enter last 4 digits of Aadhaar</span>
+      </div>
+
+      <!-- Risk Zone — NEW: feeds dynamic premium engine -->
+      <div class="zone-label full">Risk Zone <span style="font-size:10px; color:#aaa; text-transform:none; letter-spacing:0; font-weight:400;">(affects your weekly premium)</span></div>
+      <div class="zone-row full" id="zoneRow">
+        <div class="zone-badge active" data-zone="A" onclick="selectZone(this)">🟢 Zone A — Low Risk</div>
+        <div class="zone-badge" data-zone="B" onclick="selectZone(this)">🟡 Zone B — Moderate</div>
+        <div class="zone-badge" data-zone="C" onclick="selectZone(this)">🔴 Zone C — High Risk</div>
+      </div>
+
+      <!-- Dynamic Premium Preview — NEW: shows calculated premium in real time -->
+      <div class="premium-preview full">
+        <div>
+          <div class="label">Estimated Weekly Premium</div>
+          <div class="amount" id="premiumDisplay">₹20 <span>/ week</span></div>
+        </div>
+        <div class="premium-tag" id="premiumTag">AI Calculated</div>
+      </div>
+
+      <!-- Submit -->
+      <button class="submit-btn full" onclick="register()" id="submitBtn">
+        Activate Coverage →
+      </button>
+
+    </div>
+  </div>
+</div>
+
+<!-- Success overlay -->
+<div class="success-overlay" id="successOverlay">
+  <div class="success-card">
+    <div class="success-icon">✅</div>
+    <h3>You're covered!</h3>
+    <p>Policy activated. Redirecting to your dashboard…</p>
+  </div>
+</div>
+
+<script>
+  /* ── DYNAMIC PREMIUM ENGINE ── */
+  const BASE_PREMIUMS = { Swiggy: 22, Zomato: 22, Zepto: 20, Blinkit: 20, Dunzo: 18, Porter: 24, '': 20 };
+  const ROLE_SURCHARGE = { delivery_bike: 0, delivery_cycle: -2, delivery_foot: -3, pickup: -1, '': 0 };
+  const ZONE_DISCOUNT  = { A: -2, B: 0, C: 3 };
+  const ZONE_TAGS      = { A: '🟢 Safe Zone Discount', B: '⚡ AI Calculated', C: '⚠️ High Risk Zone' };
+
+  let selectedZone = 'A';
+
+  function selectZone(el) {
+    document.querySelectorAll('.zone-badge').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    selectedZone = el.dataset.zone;
+    updatePremium();
+  }
+
+  function updatePremium() {
+    const platform = document.getElementById('type').value;
+    const role     = document.getElementById('role').value;
+    const base     = BASE_PREMIUMS[platform] || 20;
+    const surcharge = ROLE_SURCHARGE[role] || 0;
+    const discount  = ZONE_DISCOUNT[selectedZone];
+    const total     = Math.max(10, base + surcharge + discount);
+
+    document.getElementById('premiumDisplay').innerHTML = `₹${total} <span>/ week</span>`;
+    document.getElementById('premiumTag').textContent = ZONE_TAGS[selectedZone];
+  }
+
+  /* ── VALIDATION ── */
+  function validateField(id, condition) {
+    const el = document.getElementById('field-' + id);
+    if (!condition) { el.classList.add('error'); return false; }
+    el.classList.remove('error'); return true;
+  }
+
+  /* ── REGISTER ── */
+  function register() {
+    const name    = document.getElementById('name').value.trim();
+    const phone   = document.getElementById('phone').value.trim();
+    const city    = document.getElementById('city').value.trim();
+    const type    = document.getElementById('type').value;
+    const role    = document.getElementById('role').value;
+    const aadhaar = document.getElementById('aadhaar').value.trim();
+
+    const v1 = validateField('name',    name.length >= 2);
+    const v2 = validateField('phone',   /^\d{10}$/.test(phone));
+    const v3 = validateField('city',    city.length >= 2);
+    const v4 = validateField('type',    type !== '');
+    const v5 = validateField('role',    role !== '');
+    const v6 = validateField('aadhaar', /^\d{4}$/.test(aadhaar));
+
+    if (!(v1 && v2 && v3 && v4 && v5 && v6)) return;
+
+    // Build premium
+    const base      = BASE_PREMIUMS[type] || 20;
+    const surcharge = ROLE_SURCHARGE[role] || 0;
+    const discount  = ZONE_DISCOUNT[selectedZone];
+    const premium   = Math.max(10, base + surcharge + discount);
+
+    const user = {
+      name, phone, city,
+      platform: type,
+      role,
+      aadhaarLast4: aadhaar,
+      riskZone: selectedZone,
+      weeklyPremium: premium,
+      registeredAt: new Date().toISOString(),
+      policyId: 'WS-' + Date.now(),
+      coverageActive: true
+    };
+
+    localStorage.setItem('user', JSON.stringify(user));
+
+    // Show success
+    const btn = document.getElementById('submitBtn');
+    btn.textContent = 'Registering…';
+    btn.classList.add('loading');
+
+    setTimeout(() => {
+      document.getElementById('successOverlay').classList.add('show');
+      setTimeout(() => { window.location.href = 'choosePlan.html'; }, 1800);
+    }, 700);
+  }
+
+  // Live phone formatting — digits only
+  document.getElementById('phone').addEventListener('input', function() {
+    this.value = this.value.replace(/\D/g, '');
+  });
+  document.getElementById('aadhaar').addEventListener('input', function() {
+    this.value = this.value.replace(/\D/g, '');
+  });
+</script>
+</body>
+</html>

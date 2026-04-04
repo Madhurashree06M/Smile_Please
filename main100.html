@@ -1,208 +1,1110 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Main Dashboard</title>
-    <style>
-        body {
-            font-family: Arial;
-            background: #f4f4f4;
-            text-align: center;
-        }
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WorkerShield — Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        .box {
-            background: white;
-            margin: 20px auto;
-            padding: 20px;
-            width: 350px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px gray;
-        }
+    :root {
+      --ink:        #0d1117;
+      --paper:      #f7f5f0;
+      --accent:     #e8521a;
+      --accent2:    #f5a623;
+      --muted:      #7a7670;
+      --line:       rgba(13,17,23,0.12);
+      --card-bg:    #ffffff;
+      --success:    #1a9e5c;
+      --danger:     #c0392b;
+      --transition: 0.3s cubic-bezier(0.4,0,0.2,1);
+    }
 
-        button {
-            margin: 10px;
-            padding: 10px;
-            width: 80%;
-            border: none;
-            background: #007bff;
-            color: white;
-            cursor: pointer;
-        }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--paper);
+      min-height: 100vh;
+      position: relative;
+    }
 
-        button:hover {
-            background: #0056b3;
-        }
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image:
+        radial-gradient(circle at 5% 20%, rgba(232,82,26,0.06) 0%, transparent 35%),
+        radial-gradient(circle at 95% 80%, rgba(245,166,35,0.07) 0%, transparent 35%),
+        url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%230d1117' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      pointer-events: none; z-index: 0;
+    }
 
-        #claims {
-            text-align: left;
-            margin-top: 10px;
-        }
-    </style>
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(247,245,240,0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
+      padding: 14px 32px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+
+    .nav-brand { display: flex; align-items: center; gap: 10px; }
+
+    .nav-logo {
+      width: 34px; height: 34px; background: var(--accent);
+      border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 16px;
+    }
+
+    .nav-name {
+      font-family: 'Syne', sans-serif; font-weight: 800; font-size: 17px; color: var(--ink);
+    }
+
+    .nav-right { display: flex; align-items: center; gap: 12px; }
+
+    .nav-status {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12.5px; color: var(--success); font-weight: 500;
+    }
+
+    .status-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 0 3px rgba(26,158,92,0.2);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 3px rgba(26,158,92,0.2); }
+      50%       { box-shadow: 0 0 0 6px rgba(26,158,92,0.08); }
+    }
+
+    .nav-avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: var(--ink); color: #fff;
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+    }
+
+    /* ── LAYOUT ── */
+    .page {
+      max-width: 1100px; margin: 0 auto;
+      padding: 32px 24px 60px;
+      position: relative; z-index: 1;
+    }
+
+    /* ── HEADER ── */
+    .dash-header {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      margin-bottom: 28px;
+      animation: fadeDown 0.5s both;
+    }
+
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .dash-greeting h1 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800; font-size: 28px;
+      color: var(--ink); letter-spacing: -0.5px;
+    }
+
+    .dash-greeting h1 span { color: var(--accent); }
+
+    .dash-greeting p { font-size: 14px; color: var(--muted); margin-top: 4px; }
+
+    .dash-date {
+      text-align: right;
+      font-size: 13px; color: var(--muted);
+    }
+
+    .dash-date strong { display: block; font-size: 15px; color: var(--ink); font-weight: 600; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── ALERT BANNER ── */
+    .alert-banner {
+      display: none;
+      background: linear-gradient(135deg, rgba(232,82,26,0.08), rgba(245,166,35,0.08));
+      border: 1.5px solid rgba(232,82,26,0.25);
+      border-radius: 14px; padding: 14px 18px;
+      margin-bottom: 20px;
+      align-items: center; gap: 12px;
+      animation: fadeUp 0.4s both;
+    }
+    .alert-banner.show { display: flex; }
+    .alert-banner .alert-icon { font-size: 20px; flex-shrink: 0; }
+    .alert-banner .alert-text { font-size: 13.5px; color: var(--ink); line-height: 1.5; }
+    .alert-banner .alert-text strong { color: var(--accent); }
+    .alert-dismiss {
+      margin-left: auto; background: none; border: none;
+      font-size: 18px; color: var(--muted); cursor: pointer;
+      flex-shrink: 0; opacity: 0.6; transition: opacity var(--transition);
+    }
+    .alert-dismiss:hover { opacity: 1; }
+
+    /* ── STAT CARDS ── */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px; margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      border: 1.5px solid var(--line);
+      border-radius: 16px; padding: 20px;
+      animation: fadeUp 0.5s both;
+    }
+
+    .stat-card:nth-child(1) { animation-delay: 0.05s; }
+    .stat-card:nth-child(2) { animation-delay: 0.10s; }
+    .stat-card:nth-child(3) { animation-delay: 0.15s; }
+    .stat-card:nth-child(4) { animation-delay: 0.20s; }
+
+    .stat-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+
+    .stat-icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center; font-size: 17px;
+    }
+
+    .stat-icon.green  { background: rgba(26,158,92,0.1); }
+    .stat-icon.orange { background: rgba(232,82,26,0.1); }
+    .stat-icon.yellow { background: rgba(245,166,35,0.1); }
+    .stat-icon.blue   { background: rgba(59,130,246,0.1); }
+
+    .stat-badge {
+      font-size: 10.5px; font-weight: 500; letter-spacing: 0.3px;
+      padding: 3px 8px; border-radius: 99px;
+      background: rgba(26,158,92,0.1); color: var(--success);
+    }
+
+    .stat-badge.warn { background: rgba(232,82,26,0.1); color: var(--accent); }
+
+    .stat-value {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800; font-size: 26px;
+      color: var(--ink); letter-spacing: -0.5px;
+    }
+
+    .stat-label { font-size: 12px; color: var(--muted); margin-top: 3px; }
+
+    /* ── MAIN GRID ── */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 20px;
+    }
+
+    .left-col { display: flex; flex-direction: column; gap: 20px; }
+    .right-col { display: flex; flex-direction: column; gap: 20px; }
+
+    /* ── CARD BASE ── */
+    .card {
+      background: var(--card-bg);
+      border: 1.5px solid var(--line);
+      border-radius: 20px; padding: 24px;
+      animation: fadeUp 0.5s both;
+    }
+
+    .card:nth-child(1) { animation-delay: 0.12s; }
+    .card:nth-child(2) { animation-delay: 0.18s; }
+    .card:nth-child(3) { animation-delay: 0.24s; }
+
+    .card-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .card-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700; font-size: 15px; color: var(--ink);
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    .card-action {
+      font-size: 12.5px; color: var(--accent); font-weight: 500;
+      cursor: pointer; text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: border-color var(--transition);
+    }
+    .card-action:hover { border-color: var(--accent); }
+
+    /* ── POLICY CARD ── */
+    .policy-hero {
+      background: linear-gradient(135deg, var(--ink) 0%, #1e2630 100%);
+      border-radius: 16px; padding: 24px;
+      position: relative; overflow: hidden; margin-bottom: 20px;
+    }
+
+    .policy-hero::before {
+      content: '';
+      position: absolute; top: -40px; right: -40px;
+      width: 140px; height: 140px;
+      background: radial-gradient(circle, rgba(232,82,26,0.3) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    .policy-plan-row {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 16px; position: relative; z-index: 1;
+    }
+
+    .policy-plan-name {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800; font-size: 22px; color: #fff;
+    }
+
+    .policy-status-pill {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(26,158,92,0.2); color: #4ade80;
+      font-size: 11.5px; font-weight: 600;
+      padding: 5px 12px; border-radius: 99px;
+    }
+
+    .policy-status-pill .dot {
+      width: 6px; height: 6px; border-radius: 50%; background: #4ade80;
+      animation: pulse 2s infinite;
+    }
+
+    .policy-details-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 12px; position: relative; z-index: 1;
+    }
+
+    .pd-item .pd-label { font-size: 10.5px; color: rgba(255,255,255,0.45); margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.4px; }
+    .pd-item .pd-value { font-size: 14px; font-weight: 600; color: #fff; }
+
+    /* ── WALLET ── */
+    .wallet-row {
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--paper); border-radius: 12px; padding: 14px 16px;
+    }
+
+    .wallet-left .wl { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); font-weight: 500; }
+    .wallet-left .wv { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 28px; color: var(--ink); }
+
+    .wallet-btn {
+      padding: 10px 18px;
+      background: var(--accent); color: #fff;
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px;
+      border: none; border-radius: 10px; cursor: pointer;
+      transition: background var(--transition), transform var(--transition);
+    }
+    .wallet-btn:hover { background: #d44413; transform: translateY(-1px); }
+
+    /* ── TRIGGERS ── */
+    .triggers-grid { display: flex; flex-direction: column; gap: 10px; }
+
+    .trigger-item {
+      display: flex; align-items: center; gap: 14px;
+      background: var(--paper); border-radius: 12px;
+      padding: 13px 16px; cursor: pointer;
+      border: 1.5px solid transparent;
+      transition: all var(--transition);
+      position: relative; overflow: hidden;
+    }
+
+    .trigger-item::after {
+      content: '';
+      position: absolute; left: 0; top: 0; bottom: 0;
+      width: 3px; border-radius: 99px;
+      transition: background var(--transition);
+    }
+
+    .trigger-item:hover { border-color: var(--line); background: #fff; transform: translateX(2px); }
+    .trigger-item:hover::after { background: var(--accent); }
+
+    .trigger-item.fired { border-color: rgba(26,158,92,0.3); background: rgba(26,158,92,0.04); }
+    .trigger-item.fired::after { background: var(--success); }
+
+    .trigger-icon {
+      width: 38px; height: 38px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center; font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .trigger-info { flex: 1; }
+    .trigger-name { font-size: 13.5px; font-weight: 500; color: var(--ink); }
+    .trigger-desc { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+    .trigger-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+
+    .trigger-amount { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px; color: var(--success); }
+    .trigger-btn {
+      font-size: 11px; font-weight: 600; padding: 4px 10px;
+      border-radius: 99px; border: 1.5px solid var(--line);
+      background: none; cursor: pointer; color: var(--muted);
+      transition: all var(--transition);
+    }
+    .trigger-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .trigger-btn.fired-btn { border-color: var(--success); color: var(--success); }
+
+    /* ── CLAIMS HISTORY ── */
+    .claims-list { display: flex; flex-direction: column; gap: 10px; }
+
+    .claim-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 13px 16px;
+      background: var(--paper); border-radius: 12px;
+      animation: fadeUp 0.4s both;
+    }
+
+    .claim-icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: rgba(26,158,92,0.1);
+      display: flex; align-items: center; justify-content: center; font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .claim-icon.pending { background: rgba(245,166,35,0.1); }
+    .claim-icon.rejected { background: rgba(192,57,43,0.1); }
+
+    .claim-info { flex: 1; }
+    .claim-event { font-size: 13.5px; font-weight: 500; color: var(--ink); }
+    .claim-meta  { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+
+    .claim-right { text-align: right; }
+    .claim-amount { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 15px; color: var(--success); }
+    .claim-status {
+      font-size: 11px; font-weight: 600;
+      padding: 3px 8px; border-radius: 99px; margin-top: 4px; display: inline-block;
+    }
+    .claim-status.approved { background: rgba(26,158,92,0.12); color: var(--success); }
+    .claim-status.pending  { background: rgba(245,166,35,0.12); color: #9a6e00; }
+    .claim-status.rejected { background: rgba(192,57,43,0.12); color: var(--danger); }
+
+    .empty-claims {
+      text-align: center; padding: 28px 16px;
+      font-size: 14px; color: var(--muted);
+    }
+
+    .empty-claims .ec-icon { font-size: 32px; margin-bottom: 8px; }
+
+    /* ── PREMIUM TIMELINE ── */
+    .premium-timeline { display: flex; flex-direction: column; gap: 10px; }
+
+    .pt-row {
+      display: flex; align-items: center; gap: 12px;
+      font-size: 13px;
+    }
+
+    .pt-dot {
+      width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+    }
+
+    .pt-dot.paid { background: var(--success); }
+    .pt-dot.due  { background: var(--accent); animation: pulse-red 2s infinite; }
+    .pt-dot.upcoming { background: rgba(13,17,23,0.2); }
+
+    @keyframes pulse-red {
+      0%,100% { box-shadow: 0 0 0 3px rgba(232,82,26,0.2); }
+      50%      { box-shadow: 0 0 0 6px rgba(232,82,26,0.08); }
+    }
+
+    .pt-label { flex: 1; color: var(--ink); }
+    .pt-amount { font-weight: 600; color: var(--ink); }
+    .pt-status { font-size: 11px; color: var(--muted); }
+
+    /* ── MANUAL CLAIM BUTTON ── */
+    .manual-claim-btn {
+      width: 100%; padding: 13px;
+      background: transparent;
+      border: 2px dashed rgba(13,17,23,0.18);
+      border-radius: 14px; color: var(--muted);
+      font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
+      cursor: pointer; transition: all var(--transition);
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+
+    .manual-claim-btn:hover {
+      border-color: var(--accent); color: var(--accent);
+      background: rgba(232,82,26,0.03);
+    }
+
+    /* ── MODALS ── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(13,17,23,0.55); backdrop-filter: blur(5px);
+      z-index: 200; align-items: center; justify-content: center;
+    }
+    .modal-overlay.show { display: flex; }
+
+    .modal-card {
+      background: var(--card-bg); border-radius: 22px;
+      padding: 36px 32px; max-width: 400px; width: 100%;
+      animation: popIn 0.35s cubic-bezier(0.4,0,0.2,1) both;
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.88); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    .modal-icon-lg { font-size: 40px; margin-bottom: 14px; }
+
+    .modal-card h3 {
+      font-family: 'Syne', sans-serif; font-weight: 800; font-size: 20px;
+      color: var(--ink); margin-bottom: 8px;
+    }
+
+    .modal-card p { font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: 4px; }
+
+    .modal-credit {
+      background: rgba(26,158,92,0.08); border-radius: 12px;
+      padding: 14px 16px; margin: 16px 0;
+      text-align: center;
+    }
+
+    .modal-credit .mc-amount {
+      font-family: 'Syne', sans-serif; font-weight: 800; font-size: 28px;
+      color: var(--success);
+    }
+
+    .modal-credit .mc-label { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+    .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+
+    .btn-ghost {
+      flex: 1; padding: 12px;
+      background: var(--paper); color: var(--muted);
+      font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
+      border: 1.5px solid var(--line); border-radius: 10px; cursor: pointer;
+      transition: all var(--transition);
+    }
+    .btn-ghost:hover { border-color: var(--muted); color: var(--ink); }
+
+    .btn-primary {
+      flex: 2; padding: 12px;
+      background: var(--accent); color: #fff;
+      font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700;
+      border: none; border-radius: 10px; cursor: pointer;
+      transition: background var(--transition);
+    }
+    .btn-primary:hover { background: #d44413; }
+
+    /* Top-up modal */
+    .topup-options { display: flex; flex-direction: column; gap: 10px; margin: 16px 0; }
+
+    .topup-option {
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--paper); border-radius: 10px; padding: 12px 14px;
+      cursor: pointer; border: 1.5px solid transparent;
+      transition: all var(--transition);
+    }
+    .topup-option:hover { border-color: var(--accent); background: rgba(232,82,26,0.04); }
+
+    .topup-option .ta { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 16px; color: var(--ink); }
+    .topup-option .tm { font-size: 12px; color: var(--muted); }
+
+    /* Manual claim modal */
+    .claim-types { display: flex; flex-direction: column; gap: 10px; margin: 16px 0; }
+    .claim-type {
+      display: flex; align-items: center; gap: 12px;
+      background: var(--paper); border-radius: 10px; padding: 12px 14px;
+      cursor: pointer; border: 1.5px solid transparent;
+      transition: all var(--transition);
+    }
+    .claim-type:hover { border-color: var(--accent); background: #fff; }
+    .claim-type .ct-icon { font-size: 20px; }
+    .claim-type .ct-name { font-size: 14px; font-weight: 500; color: var(--ink); }
+    .claim-type .ct-desc { font-size: 12px; color: var(--muted); }
+
+    @media (max-width: 900px) {
+      .main-grid { grid-template-columns: 1fr; }
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 500px) {
+      .stats-row { grid-template-columns: 1fr 1fr; }
+      .policy-details-grid { grid-template-columns: repeat(2, 1fr); }
+      nav { padding: 12px 16px; }
+      .page { padding: 20px 14px 40px; }
+    }
+  </style>
 </head>
-
 <body>
 
-<h2 id="welcome"></h2>
-<div class="box">
-    <h3>📅 Policy Info</h3>
-    <p id="policyStart"></p>
-    <p id="todayDate"></p>
-    <p id="premiumStatus"></p>
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">
+    <div class="nav-logo">🛡️</div>
+    <div class="nav-name">WorkerShield</div>
+  </div>
+  <div class="nav-right">
+    <div class="nav-status">
+      <div class="status-dot"></div>
+      Coverage Active
+    </div>
+    <div class="nav-avatar" id="navAvatar">A</div>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="dash-header">
+    <div class="dash-greeting">
+      <h1>Good <span id="timeGreeting">morning</span>, <span id="userName">Worker</span> 👋</h1>
+      <p id="policyId">Loading your policy…</p>
+    </div>
+    <div class="dash-date">
+      <strong id="todayDate">—</strong>
+      <span id="policyStart">Active since —</span>
+    </div>
+  </div>
+
+  <!-- ALERT BANNER -->
+  <div class="alert-banner" id="alertBanner">
+    <span class="alert-icon">⚡</span>
+    <span class="alert-text" id="alertText"></span>
+    <button class="alert-dismiss" onclick="dismissAlert()">✕</button>
+  </div>
+
+  <!-- STAT CARDS -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-top">
+        <div class="stat-icon green">💰</div>
+        <div class="stat-badge" id="walletBadge">Balance</div>
+      </div>
+      <div class="stat-value" id="statWallet">₹0</div>
+      <div class="stat-label">Wallet Balance</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-top">
+        <div class="stat-icon orange">📋</div>
+        <div class="stat-badge" id="planBadge" style="background:rgba(232,82,26,0.1);color:var(--accent)">Active</div>
+      </div>
+      <div class="stat-value" id="statPlan">—</div>
+      <div class="stat-label">Current Plan</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-top">
+        <div class="stat-icon yellow">⚡</div>
+        <div class="stat-badge">Weekly</div>
+      </div>
+      <div class="stat-value" id="statPremium">₹—</div>
+      <div class="stat-label">Premium (AI-adjusted)</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-top">
+        <div class="stat-icon blue">📜</div>
+        <div class="stat-badge" id="claimBadge">Total</div>
+      </div>
+      <div class="stat-value" id="statClaims">0</div>
+      <div class="stat-label">Claims Filed</div>
+    </div>
+  </div>
+
+  <!-- MAIN GRID -->
+  <div class="main-grid">
+
+    <!-- LEFT COL -->
+    <div class="left-col">
+
+      <!-- POLICY CARD -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🛡️ Policy Overview</div>
+          <a class="card-action" href="choosePlan.html">Change Plan</a>
+        </div>
+
+        <div class="policy-hero">
+          <div class="policy-plan-row">
+            <div class="policy-plan-name" id="policyPlanName">— Plan</div>
+            <div class="policy-status-pill"><div class="dot"></div> Active</div>
+          </div>
+          <div class="policy-details-grid">
+            <div class="pd-item">
+              <div class="pd-label">Weekly Premium</div>
+              <div class="pd-value" id="pdPremium">₹—</div>
+            </div>
+            <div class="pd-item">
+              <div class="pd-label">Coverage Hours</div>
+              <div class="pd-value" id="pdCoverage">— hrs/day</div>
+            </div>
+            <div class="pd-item">
+              <div class="pd-label">Risk Score</div>
+              <div class="pd-value" id="pdRisk">—/100</div>
+            </div>
+            <div class="pd-item">
+              <div class="pd-label">Claim Amount</div>
+              <div class="pd-value" id="pdClaim">₹— / event</div>
+            </div>
+            <div class="pd-item">
+              <div class="pd-label">Zone</div>
+              <div class="pd-value" id="pdZone">Zone —</div>
+            </div>
+            <div class="pd-item">
+              <div class="pd-label">Policy ID</div>
+              <div class="pd-value" id="pdPolicyId" style="font-size:12px;">—</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Wallet -->
+        <div class="wallet-row">
+          <div class="wallet-left">
+            <div class="wl">Wallet Balance</div>
+            <div class="wv" id="walletDisplay">₹0</div>
+          </div>
+          <button class="wallet-btn" onclick="openTopup()">+ Top Up</button>
+        </div>
+      </div>
+
+      <!-- CLAIM HISTORY -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📜 Claim History</div>
+          <span class="card-action" onclick="clearClaims()">Clear all</span>
+        </div>
+        <div class="claims-list" id="claimsList"></div>
+        <button class="manual-claim-btn" style="margin-top:16px;" onclick="openManualClaim()">
+          ✏️ File a manual claim
+        </button>
+      </div>
+
+    </div>
+
+    <!-- RIGHT COL -->
+    <div class="right-col">
+
+      <!-- AUTO TRIGGERS -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">⚡ Automated Triggers</div>
+          <span class="card-action" onclick="runAllTriggers()">Run all</span>
+        </div>
+        <div class="triggers-grid">
+
+          <div class="trigger-item" id="trig-Rain">
+            <div class="trigger-icon" style="background:rgba(59,130,246,0.1)">🌧️</div>
+            <div class="trigger-info">
+              <div class="trigger-name">Heavy Rainfall</div>
+              <div class="trigger-desc">Triggers if rain > 65mm in your zone</div>
+            </div>
+            <div class="trigger-right">
+              <div class="trigger-amount" id="amt-Rain">+₹200</div>
+              <button class="trigger-btn" onclick="fireTrigger('Rain','Heavy Rainfall','🌧️',event)">Simulate</button>
+            </div>
+          </div>
+
+          <div class="trigger-item" id="trig-Flood">
+            <div class="trigger-icon" style="background:rgba(232,82,26,0.1)">🌊</div>
+            <div class="trigger-info">
+              <div class="trigger-name">Flooded Road</div>
+              <div class="trigger-desc">Area road closure detected via alert API</div>
+            </div>
+            <div class="trigger-right">
+              <div class="trigger-amount" id="amt-Flood">+₹250</div>
+              <button class="trigger-btn" onclick="fireTrigger('Flood','Flooded Road','🌊',event)">Simulate</button>
+            </div>
+          </div>
+
+          <div class="trigger-item" id="trig-Holiday">
+            <div class="trigger-icon" style="background:rgba(245,166,35,0.1)">📅</div>
+            <div class="trigger-info">
+              <div class="trigger-name">Public Holiday</div>
+              <div class="trigger-desc">Government holiday — reduced order volume</div>
+            </div>
+            <div class="trigger-right">
+              <div class="trigger-amount" id="amt-Holiday">+₹150</div>
+              <button class="trigger-btn" onclick="fireTrigger('Holiday','Public Holiday','📅',event)">Simulate</button>
+            </div>
+          </div>
+
+          <div class="trigger-item" id="trig-Zone">
+            <div class="trigger-icon" style="background:rgba(192,57,43,0.1)">⚠️</div>
+            <div class="trigger-info">
+              <div class="trigger-name">Zone Risk Alert</div>
+              <div class="trigger-desc">High-risk zone alert from civic authority</div>
+            </div>
+            <div class="trigger-right">
+              <div class="trigger-amount" id="amt-Zone">+₹180</div>
+              <button class="trigger-btn" onclick="fireTrigger('Zone Alert','Zone Risk Alert','⚠️',event)">Simulate</button>
+            </div>
+          </div>
+
+          <div class="trigger-item" id="trig-Heatwave">
+            <div class="trigger-icon" style="background:rgba(245,166,35,0.1)">🔥</div>
+            <div class="trigger-info">
+              <div class="trigger-name">Extreme Heatwave</div>
+              <div class="trigger-desc">Temperature > 42°C — unsafe working conditions</div>
+            </div>
+            <div class="trigger-right">
+              <div class="trigger-amount" id="amt-Heatwave">+₹160</div>
+              <button class="trigger-btn" onclick="fireTrigger('Heatwave','Extreme Heatwave','🔥',event)">Simulate</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- PREMIUM TIMELINE -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">💳 Premium Timeline</div>
+        </div>
+        <div class="premium-timeline" id="premiumTimeline"></div>
+        <div style="margin-top:14px; padding:12px 14px; background:var(--paper); border-radius:10px; font-size:12.5px; color:var(--muted); line-height:1.55;" id="premiumNote">
+          Loading payment info…
+        </div>
+      </div>
+
+    </div>
+  </div>
 </div>
 
-<div class="box">
-    <h3>📄 Your Plan</h3>
-    <p id="plan"></p>
+<!-- TRIGGER CONFIRMATION MODAL -->
+<div class="modal-overlay" id="triggerModal">
+  <div class="modal-card">
+    <div class="modal-icon-lg" id="tmIcon">⚡</div>
+    <h3 id="tmTitle">Trigger Fired</h3>
+    <p id="tmDesc">Income disruption detected and verified.</p>
+    <div class="modal-credit">
+      <div class="mc-amount" id="tmAmount">+₹200</div>
+      <div class="mc-label">Credited to your wallet — zero-touch claim</div>
+    </div>
+    <p style="font-size:12px; color:var(--muted); margin-top:4px;">Claim ID: <strong id="tmClaimId">—</strong> · Status: <span style="color:var(--success);font-weight:600;">Auto-Approved</span></p>
+    <div class="modal-actions" style="margin-top:20px;">
+      <button class="btn-primary" onclick="closeTriggerModal()">Got it ✓</button>
+    </div>
+  </div>
 </div>
 
-<div class="box">
-    <h3>💰 Wallet Balance</h3>
-    <p id="wallet">₹0</p>
+<!-- TOP-UP MODAL -->
+<div class="modal-overlay" id="topupModal">
+  <div class="modal-card">
+    <div class="modal-icon-lg">💳</div>
+    <h3>Top Up Wallet</h3>
+    <p>Select an amount to add via simulated UPI AutoPay:</p>
+    <div class="topup-options">
+      <div class="topup-option" onclick="topUp(100)"><span class="ta">₹100</span><span class="tm">Quick top-up</span></div>
+      <div class="topup-option" onclick="topUp(250)"><span class="ta">₹250</span><span class="tm">Covers ~4 weeks</span></div>
+      <div class="topup-option" onclick="topUp(500)"><span class="ta">₹500</span><span class="tm">Covers ~8 weeks</span></div>
+      <div class="topup-option" onclick="topUp(1000)"><span class="ta">₹1,000</span><span class="tm">Best value</span></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeTopup()">Cancel</button>
+    </div>
+  </div>
 </div>
 
-<div class="box">
-    <h3>⚡ Simulate Events</h3>
-    <button onclick="trigger('Rain', 200)">Simulate Heavy Rain</button>
-    <button onclick="trigger('Flood', 250)">Simulate Flooded Road</button>
-</div>
-
-<div class="box">
-    <h3>📜 Claim History</h3>
-    <div id="claims"></div>
+<!-- MANUAL CLAIM MODAL -->
+<div class="modal-overlay" id="manualClaimModal">
+  <div class="modal-card">
+    <div class="modal-icon-lg">✏️</div>
+    <h3>File a Manual Claim</h3>
+    <p>Select the reason for your income disruption:</p>
+    <div class="claim-types">
+      <div class="claim-type" onclick="fileManualClaim('Accident','Delivery accident reported','🚑')">
+        <span class="ct-icon">🚑</span>
+        <div><div class="ct-name">Accident</div><div class="ct-desc">Road or delivery accident</div></div>
+      </div>
+      <div class="claim-type" onclick="fileManualClaim('Health Emergency','Medical emergency — unable to work','🏥')">
+        <span class="ct-icon">🏥</span>
+        <div><div class="ct-name">Health Emergency</div><div class="ct-desc">Illness or injury preventing work</div></div>
+      </div>
+      <div class="claim-type" onclick="fileManualClaim('Vehicle Breakdown','Vehicle breakdown — unable to deliver','🔧')">
+        <span class="ct-icon">🔧</span>
+        <div><div class="ct-name">Vehicle Breakdown</div><div class="ct-desc">Bike or cycle malfunction</div></div>
+      </div>
+      <div class="claim-type" onclick="fileManualClaim('App Outage','Platform app outage — no orders available','📵')">
+        <span class="ct-icon">📵</span>
+        <div><div class="ct-name">Platform Outage</div><div class="ct-desc">Swiggy / Zomato / Zepto app down</div></div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeManualClaim()">Cancel</button>
+    </div>
+  </div>
 </div>
 
 <script>
-    
-// Load user
-let user = JSON.parse(localStorage.getItem("user"));
-let userId = user.phone;
-if (!localStorage.getItem("policyStart_" + userId)) {
-    localStorage.setItem("policyStart_" + userId, new Date().toDateString());
-}
+  /* ── DATA ── */
+  const user   = JSON.parse(localStorage.getItem('user')   || '{}');
+  const policy = JSON.parse(localStorage.getItem('policy') || '{}');
+  const userId = user.phone || 'guest';
 
-// Load policy
-let policy = JSON.parse(localStorage.getItem("policy"));
+  /* ── CLAIM AMOUNTS PER PLAN ── */
+  const CLAIM_AMOUNTS = { Bronze: 200, Silver: 300, Gold: 500 };
+  const TRIGGER_PCTS  = { Rain: 1.0, Flood: 1.25, Holiday: 0.75, 'Zone Alert': 0.9, Heatwave: 0.8 };
 
-// Initialize wallet & claims
-if (!localStorage.getItem("wallet_" + userId)) {
-    localStorage.setItem("wallet_" + userId, 0);
-}
+  /* ── STORAGE HELPERS ── */
+  function getWallet()  { return parseInt(localStorage.getItem('wallet_'  + userId) || '0'); }
+  function setWallet(v) { localStorage.setItem('wallet_'  + userId, v); }
+  function getClaims()  { return JSON.parse(localStorage.getItem('claims_' + userId) || '[]'); }
+  function setClaims(c) { localStorage.setItem('claims_'  + userId, JSON.stringify(c)); }
 
-if (!localStorage.getItem("claims_" + userId)) {
-    localStorage.setItem("claims_" + userId, JSON.stringify([]));
-}
-function deductWeeklyPremium() {
+  /* ── INIT STORAGE ── */
+  if (!localStorage.getItem('policyStart_' + userId))
+    localStorage.setItem('policyStart_' + userId, new Date().toDateString());
 
-    let policy = JSON.parse(localStorage.getItem("policy"));
-    let wallet = parseInt(localStorage.getItem("wallet_" + userId));
+  /* ── GREETING ── */
+  const hr = new Date().getHours();
+  document.getElementById('timeGreeting').textContent = hr < 12 ? 'morning' : hr < 17 ? 'afternoon' : 'evening';
 
-    if (!policy) return;
+  /* ── POPULATE ── */
+  function init() {
+    // Nav + header
+    const firstName = (user.name || 'Worker').split(' ')[0];
+    document.getElementById('userName').textContent    = firstName;
+    document.getElementById('navAvatar').textContent   = firstName[0].toUpperCase();
+    document.getElementById('todayDate').textContent   = new Date().toLocaleDateString('en-IN', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+    document.getElementById('policyStart').textContent = 'Active since ' + (localStorage.getItem('policyStart_' + userId) || '—');
+    document.getElementById('policyId').textContent    = 'Policy ID: ' + (user.policyId || policy.policyId || 'WS-' + userId);
 
-    let lastPaid = localStorage.getItem("lastPaid_" + userId);
-    let now = new Date().getTime();
+    // Policy details
+    const planName = policy.plan || '—';
+    document.getElementById('policyPlanName').textContent = planName + ' Plan';
+    document.getElementById('statPlan').textContent       = planName;
+    document.getElementById('statPremium').textContent    = '₹' + (policy.price || '—');
+    document.getElementById('pdPremium').textContent      = '₹' + (policy.price || '—') + '/wk';
+    document.getElementById('pdCoverage').textContent     = (policy.coverage || '—') + ' hrs/day';
+    document.getElementById('pdRisk').textContent         = (policy.riskScore || '—') + '/100';
+    document.getElementById('pdClaim').textContent        = '₹' + (policy.claimAmount || CLAIM_AMOUNTS[planName] || '—') + ' / event';
+    document.getElementById('pdZone').textContent         = 'Zone ' + (user.riskZone || '—');
+    document.getElementById('pdPolicyId').textContent     = user.policyId || 'WS-' + userId;
 
-    // 7 days = 604800000 ms
-    if (!lastPaid || (now - lastPaid > 604800000)) {
+    // Trigger amounts — scale by plan
+    const base = CLAIM_AMOUNTS[planName] || 200;
+    document.getElementById('amt-Rain').textContent    = '+₹' + Math.round(base * 1.00);
+    document.getElementById('amt-Flood').textContent   = '+₹' + Math.round(base * 1.25);
+    document.getElementById('amt-Holiday').textContent = '+₹' + Math.round(base * 0.75);
+    document.getElementById('amt-Zone').textContent    = '+₹' + Math.round(base * 0.90);
+    document.getElementById('amt-Heatwave').textContent = '+₹' + Math.round(base * 0.80);
 
-        if (wallet >= policy.price) {
-
-            wallet -= policy.price;
-            localStorage.setItem("lastDeductionDate_" + userId, new Date().toDateString());
-            localStorage.setItem("wallet_" + userId, wallet);
-
-            localStorage.setItem("lastPaid_" + userId, now);
-
-            alert("Weekly premium of ₹" + policy.price + " auto-debited via UPI AutoPay (simulated).");
-
-        } else {
-
-            alert("Insufficient balance for premium deduction (simulated UPI).");
-
-        }
-    }
-}
-
-// Show user name
-if(user) {
-    document.getElementById("welcome").innerText =
-        "Welcome, " + user.name;
-}
-let startDate = localStorage.getItem("policyStart_" + userId);
-document.getElementById("policyStart").innerText =
-    "Policy Active Since: " + startDate;
-
-let today = new Date().toDateString();
-document.getElementById("todayDate").innerText =
-    "Today: " + today;
-
-// 🔥 UPDATED PLAN DISPLAY (WITH RISK SCORE)
-if(policy) {
-    document.getElementById("plan").innerText =
-        policy.plan + " Plan (₹" + policy.price + "/week, Risk Score: " + policy.riskScore + ")";
-}
-function showPremiumStatus() {
-
-    let lastDeduction = localStorage.getItem("lastDeductionDate_" + userId);
-    let today = new Date().toDateString();
-
-    if (lastDeduction === today) {
-        document.getElementById("premiumStatus").innerText =
-            "₹ Premium deducted today";
-    } else {
-        document.getElementById("premiumStatus").innerText =
-            "No deduction today";
-    }
-}
-
-// Wallet display
-function updateWallet() {
-    let wallet = localStorage.getItem("wallet_" + userId);
-    document.getElementById("wallet").innerText = "₹" + wallet;
-}
-
-// Load claims
-function loadClaims() {
-    let claims = JSON.parse(localStorage.getItem("claims_" + userId));
-    let claimsDiv = document.getElementById("claims");
-    claimsDiv.innerHTML = "";
-
-    claims.forEach(c => {
-claimsDiv.innerHTML += `
-<p>
-<b>${c.event}</b><br>
-₹${c.amount} | ${c.time} | ${c.status}
-</p>`;    });
-}
-
-// Trigger events (AUTO CLAIM)
-function trigger(event, amount) {
-
-    let wallet = parseInt(localStorage.getItem("wallet_" + userId));
-    wallet += amount;
-    localStorage.setItem("wallet_" + userId, wallet);
-
-    let claims = JSON.parse(localStorage.getItem("claims_" + userId));
-    claims.push({
-    event: event,
-    amount: amount,
-    time: new Date().toLocaleTimeString(),
-    status: "Approved"
-});
-    localStorage.setItem("claims_" + userId, JSON.stringify(claims));
-
-    alert(event + " disruption detected. ₹" + amount + " credited.");
-    
-    
-    updateWallet();
+    updateWalletUI();
     loadClaims();
-}
+    buildPremiumTimeline();
+    checkAutoTrigger();
+  }
 
-// Initialize UI
-showPremiumStatus();
-deductWeeklyPremium();
-updateWallet();
-loadClaims();
+  /* ── WALLET UI ── */
+  function updateWalletUI() {
+    const w = getWallet();
+    document.getElementById('walletDisplay').textContent = '₹' + w.toLocaleString('en-IN');
+    document.getElementById('statWallet').textContent    = '₹' + w.toLocaleString('en-IN');
 
+    const badge = document.getElementById('walletBadge');
+    if (w < (policy.price || 0)) {
+      badge.textContent = 'Low'; badge.className = 'stat-badge warn';
+      showAlert(`⚠️ <strong>Low balance!</strong> Your wallet (₹${w}) is below your weekly premium (₹${policy.price}). Please top up to keep coverage active.`);
+    }
+  }
+
+  /* ── CLAIMS UI ── */
+  function loadClaims() {
+    const claims = getClaims();
+    const list   = document.getElementById('claimsList');
+    document.getElementById('statClaims').textContent = claims.length;
+
+    if (claims.length === 0) {
+      list.innerHTML = `<div class="empty-claims"><div class="ec-icon">📭</div>No claims yet. Triggers will auto-file when disruptions are detected.</div>`;
+      return;
+    }
+
+    list.innerHTML = '';
+    [...claims].reverse().slice(0, 8).forEach((c, i) => {
+      const statusClass = (c.status || 'approved').toLowerCase();
+      list.innerHTML += `
+        <div class="claim-item" style="animation-delay:${i * 0.05}s">
+          <div class="claim-icon ${statusClass}">${c.icon || '⚡'}</div>
+          <div class="claim-info">
+            <div class="claim-event">${c.event}</div>
+            <div class="claim-meta">${c.time} · ID: ${c.claimId || '—'}</div>
+          </div>
+          <div class="claim-right">
+            <div class="claim-amount">+₹${c.amount}</div>
+            <span class="claim-status ${statusClass}">${c.status || 'Approved'}</span>
+          </div>
+        </div>`;
+    });
+  }
+
+  /* ── PREMIUM TIMELINE ── */
+  function buildPremiumTimeline() {
+    const price    = policy.price || 0;
+    const lastPaid = localStorage.getItem('lastPaid_' + userId);
+    const today    = new Date();
+
+    const weeks = [
+      { label: '2 weeks ago', paid: true },
+      { label: 'Last week',   paid: true },
+      { label: 'This week',   paid: !!lastPaid, due: !lastPaid },
+      { label: 'Next week',   paid: false },
+    ];
+
+    let html = '';
+    weeks.forEach(w => {
+      const cls = w.paid ? 'paid' : w.due ? 'due' : 'upcoming';
+      const status = w.paid ? '✓ Paid' : w.due ? 'Due now' : 'Upcoming';
+      html += `<div class="pt-row">
+        <div class="pt-dot ${cls}"></div>
+        <span class="pt-label">${w.label}</span>
+        <span class="pt-amount">₹${price}</span>
+        <span class="pt-status">${status}</span>
+      </div>`;
+    });
+
+    document.getElementById('premiumTimeline').innerHTML = html;
+
+    // Auto-deduct
+    const now = Date.now();
+    if (!lastPaid || (now - parseInt(lastPaid)) > 604800000) {
+      const wallet = getWallet();
+      if (wallet >= price && price > 0) {
+        setWallet(wallet - price);
+        localStorage.setItem('lastPaid_' + userId, now);
+        localStorage.setItem('lastDeductionDate_' + userId, today.toDateString());
+        updateWalletUI();
+        showAlert(`✅ <strong>₹${price} auto-debited</strong> as your weekly premium via simulated UPI AutoPay. Coverage renewed for 7 days.`);
+        buildPremiumTimeline();
+      } else if (price > 0) {
+        document.getElementById('premiumNote').innerHTML =
+          `⚠️ Insufficient balance for auto-debit of ₹${price}. <span style="color:var(--accent);cursor:pointer;font-weight:600;" onclick="openTopup()">Top up now →</span>`;
+      }
+    } else {
+      const nextDate = new Date(parseInt(lastPaid) + 604800000);
+      document.getElementById('premiumNote').textContent =
+        `Next auto-debit of ₹${price} scheduled for ${nextDate.toLocaleDateString('en-IN', { weekday:'short', day:'numeric', month:'short' })}.`;
+    }
+  }
+
+  /* ── AUTO TRIGGER (on load, simulate checking env) ── */
+  function checkAutoTrigger() {
+    const rain = parseFloat(policy.rain || 0);
+    if (rain > 65 && getClaims().length === 0) {
+      setTimeout(() => {
+        showAlert(`🌧️ <strong>Auto-trigger fired!</strong> Rainfall of ${rain}mm detected at registration. Rain disruption claim auto-filed.`);
+      }, 1800);
+    }
+  }
+
+  /* ── FIRE TRIGGER ── */
+  function fireTrigger(key, name, icon, e) {
+    e.stopPropagation();
+    const base   = CLAIM_AMOUNTS[policy.plan] || 200;
+    const pct    = TRIGGER_PCTS[key] || 1.0;
+    const amount = Math.round(base * pct);
+    const claimId = 'CLM-' + Date.now();
+
+    // Credit wallet
+    setWallet(getWallet() + amount);
+
+    // Log claim
+    const claims = getClaims();
+    claims.push({ event: name, amount, time: new Date().toLocaleTimeString('en-IN'), status: 'Approved', icon, claimId });
+    setClaims(claims);
+
+    // Mark trigger as fired
+    const trig = document.getElementById('trig-' + key.replace(' ',''));
+    if (trig) {
+      trig.classList.add('fired');
+      const btn = trig.querySelector('.trigger-btn');
+      if (btn) { btn.textContent = '✓ Filed'; btn.classList.add('fired-btn'); }
+    }
+
+    // Show modal
+    document.getElementById('tmIcon').textContent   = icon;
+    document.getElementById('tmTitle').textContent  = name + ' Detected';
+    document.getElementById('tmDesc').textContent   = 'Auto-trigger verified. Claim filed instantly — zero-touch process.';
+    document.getElementById('tmAmount').textContent = '+₹' + amount;
+    document.getElementById('tmClaimId').textContent = claimId;
+    document.getElementById('triggerModal').classList.add('show');
+
+    updateWalletUI();
+    loadClaims();
+  }
+
+  function closeTriggerModal() { document.getElementById('triggerModal').classList.remove('show'); }
+
+  function runAllTriggers() {
+    ['Rain','Flood','Holiday'].forEach((k,i) => {
+      setTimeout(() => {
+        const names = { Rain:'Heavy Rainfall', Flood:'Flooded Road', Holiday:'Public Holiday' };
+        const icons  = { Rain:'🌧️', Flood:'🌊', Holiday:'📅' };
+        fireTriggerSilent(k, names[k], icons[k]);
+      }, i * 400);
+    });
+    setTimeout(() => { updateWalletUI(); loadClaims(); }, 1400);
+  }
+
+  function fireTriggerSilent(key, name, icon) {
+    const base   = CLAIM_AMOUNTS[policy.plan] || 200;
+    const pct    = TRIGGER_PCTS[key] || 1.0;
+    const amount = Math.round(base * pct);
+    const claimId = 'CLM-' + Date.now() + '-' + key;
+    setWallet(getWallet() + amount);
+    const claims = getClaims();
+    claims.push({ event: name, amount, time: new Date().toLocaleTimeString('en-IN'), status: 'Approved', icon, claimId });
+    setClaims(claims);
+    const trig = document.getElementById('trig-' + key);
+    if (trig) { trig.classList.add('fired'); const btn = trig.querySelector('.trigger-btn'); if (btn) { btn.textContent = '✓ Filed'; btn.classList.add('fired-btn'); } }
+  }
+
+  /* ── MANUAL CLAIM ── */
+  function openManualClaim()  { document.getElementById('manualClaimModal').classList.add('show'); }
+  function closeManualClaim() { document.getElementById('manualClaimModal').classList.remove('show'); }
+
+  function fileManualClaim(name, desc, icon) {
+    closeManualClaim();
+    const base   = CLAIM_AMOUNTS[policy.plan] || 200;
+    const amount = Math.round(base * 0.6); // manual claims = 60% of claim amount
+    const claimId = 'CLM-MAN-' + Date.now();
+    setWallet(getWallet() + amount);
+    const claims = getClaims();
+    claims.push({ event: name, amount, time: new Date().toLocaleTimeString('en-IN'), status: 'Pending', icon, claimId });
+    setClaims(claims);
+
+    document.getElementById('tmIcon').textContent    = icon;
+    document.getElementById('tmTitle').textContent   = 'Claim Submitted';
+    document.getElementById('tmDesc').textContent    = desc + '. Manual claims are reviewed within 24 hours.';
+    document.getElementById('tmAmount').textContent  = '+₹' + amount + ' (provisional)';
+    document.getElementById('tmClaimId').textContent = claimId;
+    document.getElementById('triggerModal').classList.add('show');
+    updateWalletUI();
+    loadClaims();
+  }
+
+  /* ── TOP UP ── */
+  function openTopup()  { document.getElementById('topupModal').classList.add('show'); }
+  function closeTopup() { document.getElementById('topupModal').classList.remove('show'); }
+
+  function topUp(amount) {
+    closeTopup();
+    setWallet(getWallet() + amount);
+    updateWalletUI();
+    showAlert(`✅ <strong>₹${amount} topped up</strong> successfully via simulated UPI. Your coverage is secure.`);
+  }
+
+  /* ── ALERT ── */
+  function showAlert(html) {
+    document.getElementById('alertText').innerHTML = html;
+    document.getElementById('alertBanner').classList.add('show');
+  }
+  function dismissAlert() { document.getElementById('alertBanner').classList.remove('show'); }
+
+  /* ── CLEAR ── */
+  function clearClaims() {
+    if (!confirm('Clear all claim history?')) return;
+    setClaims([]);
+    loadClaims();
+    document.getElementById('statClaims').textContent = '0';
+  }
+
+  /* ── START ── */
+  init();
 </script>
-
 </body>
 </html>
