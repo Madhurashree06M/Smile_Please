@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Registration</title>
+    <style>
+        body {
+            font-family: Arial;
+            background-color: #f4f4f4;
+            text-align: center;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            width: 300px;
+            margin: 100px auto;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px gray;
+        }
+
+        input, select {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+        }
+
+        button {
+            padding: 10px;
+            width: 100%;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>Register</h2>
+
+    <input type="text" id="name" placeholder="Enter Name">
+    <input type="text" id="phone" placeholder="Enter Phone">
+    <input type="text" id="city" placeholder="Enter City">
+
+    <select id="type">
+        <option>Swiggy</option>
+        <option>Zomato</option>
+        <option>Zepto</option>
+    </select>
+
+    <button onclick="register()">Register</button>
+</div>
+
+<script>
+function register() {
+    let name = document.getElementById("name").value;
+    let phone = document.getElementById("phone").value;
+    let city = document.getElementById("city").value;
+    let type = document.getElementById("type").value;
+
+    if(name === "" || phone === "" || city === "") {
+        alert("Please fill all fields!");
+        return;
+    }
+
+    let user = {
+        name: name,
+        phone: phone,
+        city: city,
+        type: type
+    };
+
+    localStorage.setItem("user", JSON.stringify(user));
+
+    // redirect to dashboards
+    window.location.href = "dashboard100.html";
+}
+</script>
+
+</body>
+</html>

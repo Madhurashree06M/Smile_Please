@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Choose Plan</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #f4f4f4;
+            text-align: center;
+        }
+
+        h2 {
+            margin-top: 40px;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            width: 200px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px gray;
+        }
+
+        .price {
+            font-size: 20px;
+            color: green;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 8px;
+            width: 100%;
+            border: none;
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        #message {
+            margin-top: 20px;
+            font-weight: bold;
+            color: green;
+        }
+    </style>
+</head>
+
+<body>
+
+<h2 id="welcome"></h2>
+<h3>Please select your weekly plan:</h3>
+
+<div class="container">
+
+    <div class="card">
+        <h3>Bronze</h3>
+        <p class="price">₹40 / week</p>
+        <button onclick="selectPlan('Bronze', 40)">Select</button>
+    </div>
+
+    <div class="card">
+        <h3>Silver</h3>
+        <p class="price">₹60 / week</p>
+        <button onclick="selectPlan('Silver', 60)">Select</button>
+    </div>
+
+    <div class="card">
+        <h3>Gold</h3>
+        <p class="price">₹70 / week</p>
+        <button onclick="selectPlan('Gold', 70)">Select</button>
+    </div>
+
+</div>
+
+<p id="message"></p>
+
+<script>
+// show user name
+let user = JSON.parse(localStorage.getItem("user"));
+
+if(user) {
+    document.getElementById("welcome").innerText =
+        "Welcome, " + user.name + "!";
+}
+
+// 🔥 TRAINING DATA (simulated historical dataset)
+let trainingData = [
+    { rain: 90, flood: 1, risk: 90 },
+    { rain: 80, flood: 1, risk: 85 },
+    { rain: 70, flood: 1, risk: 80 },
+    { rain: 60, flood: 0, risk: 65 },
+    { rain: 40, flood: 0, risk: 50 },
+    { rain: 20, flood: 0, risk: 30 }
+];
+
+// 🔥 SIMPLE "TRAINING" (calculate weights manually)
+function trainModel() {
+    let rainWeight = 0.6;
+    let floodWeight = 40;
+
+    return { rainWeight, floodWeight };
+}
+
+// 🔥 PREDICTION FUNCTION
+function predictRisk(rain, flood) {
+    let model = trainModel();
+
+    let risk = (rain * model.rainWeight) + (flood * model.floodWeight);
+
+    return Math.min(100, Math.round(risk)); // cap at 100
+}
+function getEnvironmentalData(city) {
+
+    // simulate environmental conditions
+    let rain = Math.random() * 100;
+
+    let flood = (rain > 65) ? 1 : 0;
+
+    return {
+        rain: rain,
+        flood: flood
+    };
+}
+// store selected plan
+function selectPlan(plan, basePrice) {
+
+    let user = JSON.parse(localStorage.getItem("user"));
+    let env = getEnvironmentalData(user.city);
+    let risk = predictRisk(env.rain, env.flood);
+    
+
+    let adjustment = 0;
+
+    if (risk >= 70) adjustment = +2;
+    else if (risk <= 40) adjustment = -2;
+
+    let finalPrice = basePrice + adjustment;
+
+    let coverageHours = 4;
+
+    if (risk >= 70) coverageHours = 6;
+    else if (risk <= 40) coverageHours = 3;
+
+    let policy = {
+        plan: plan,
+        price: finalPrice,
+        riskScore: risk,
+        coverage: coverageHours,
+        status: "Active"
+    };
+
+    // ✅ STORE POLICY
+    localStorage.setItem("policy", JSON.stringify(policy));
+
+    // 🔥 ADD THIS MESSAGE PART
+    let message = "";
+
+    if (adjustment > 0) {
+        message = "Your premium has been slightly increased by ₹2 due to higher risk in your area.";
+    } else if (adjustment < 0) {
+        message = "Good news! Your premium has been reduced by ₹2 due to lower risk in your area.";
+    } else {
+        message = "Your premium remains unchanged based on current risk levels.";
+    }
+
+    alert(message);
+
+    // ✅ REDIRECT AFTER MESSAGE
+    window.location.href = "main100.html";
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Main Dashboard</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #f4f4f4;
+            text-align: center;
+        }
+
+        .box {
+            background: white;
+            margin: 20px auto;
+            padding: 20px;
+            width: 350px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px gray;
+        }
+
+        button {
+            margin: 10px;
+            padding: 10px;
+            width: 80%;
+            border: none;
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        #claims {
+            text-align: left;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+<h2 id="welcome"></h2>
+<div class="box">
+    <h3>📅 Policy Info</h3>
+    <p id="policyStart"></p>
+    <p id="todayDate"></p>
+    <p id="premiumStatus"></p>
+</div>
+
+<div class="box">
+    <h3>📄 Your Plan</h3>
+    <p id="plan"></p>
+</div>
+
+<div class="box">
+    <h3>💰 Wallet Balance</h3>
+    <p id="wallet">₹0</p>
+</div>
+
+<div class="box">
+    <h3>⚡ Simulate Events</h3>
+    <button onclick="trigger('Rain', 200)">Simulate Heavy Rain</button>
+    <button onclick="trigger('Flood', 250)">Simulate Flooded Road</button>
+</div>
+
+<div class="box">
+    <h3>📜 Claim History</h3>
+    <div id="claims"></div>
+</div>
+
+<script>
+    
+// Load user
+let user = JSON.parse(localStorage.getItem("user"));
+let userId = user.phone;
+if (!localStorage.getItem("policyStart_" + userId)) {
+    localStorage.setItem("policyStart_" + userId, new Date().toDateString());
+}
+
+// Load policy
+let policy = JSON.parse(localStorage.getItem("policy"));
+
+// Initialize wallet & claims
+if (!localStorage.getItem("wallet_" + userId)) {
+    localStorage.setItem("wallet_" + userId, 0);
+}
+
+if (!localStorage.getItem("claims_" + userId)) {
+    localStorage.setItem("claims_" + userId, JSON.stringify([]));
+}
+function deductWeeklyPremium() {
+
+    let policy = JSON.parse(localStorage.getItem("policy"));
+    let wallet = parseInt(localStorage.getItem("wallet_" + userId));
+
+    if (!policy) return;
+
+    let lastPaid = localStorage.getItem("lastPaid_" + userId);
+    let now = new Date().getTime();
+
+    // 7 days = 604800000 ms
+    if (!lastPaid || (now - lastPaid > 604800000)) {
+
+        if (wallet >= policy.price) {
+
+            wallet -= policy.price;
+            localStorage.setItem("lastDeductionDate_" + userId, new Date().toDateString());
+            localStorage.setItem("wallet_" + userId, wallet);
+
+            localStorage.setItem("lastPaid_" + userId, now);
+
+            alert("Weekly premium of ₹" + policy.price + " auto-debited via UPI AutoPay (simulated).");
+
+        } else {
+
+            alert("Insufficient balance for premium deduction (simulated UPI).");
+
+        }
+    }
+}
+
+// Show user name
+if(user) {
+    document.getElementById("welcome").innerText =
+        "Welcome, " + user.name;
+}
+let startDate = localStorage.getItem("policyStart_" + userId);
+document.getElementById("policyStart").innerText =
+    "Policy Active Since: " + startDate;
+
+let today = new Date().toDateString();
+document.getElementById("todayDate").innerText =
+    "Today: " + today;
+
+// 🔥 UPDATED PLAN DISPLAY (WITH RISK SCORE)
+if(policy) {
+    document.getElementById("plan").innerText =
+        policy.plan + " Plan (₹" + policy.price + "/week, Risk Score: " + policy.riskScore + ")";
+}
+function showPremiumStatus() {
+
+    let lastDeduction = localStorage.getItem("lastDeductionDate_" + userId);
+    let today = new Date().toDateString();
+
+    if (lastDeduction === today) {
+        document.getElementById("premiumStatus").innerText =
+            "₹ Premium deducted today";
+    } else {
+        document.getElementById("premiumStatus").innerText =
+            "No deduction today";
+    }
+}
+
+// Wallet display
+function updateWallet() {
+    let wallet = localStorage.getItem("wallet_" + userId);
+    document.getElementById("wallet").innerText = "₹" + wallet;
+}
+
+// Load claims
+function loadClaims() {
+    let claims = JSON.parse(localStorage.getItem("claims_" + userId));
+    let claimsDiv = document.getElementById("claims");
+    claimsDiv.innerHTML = "";
+
+    claims.forEach(c => {
+claimsDiv.innerHTML += `
+<p>
+<b>${c.event}</b><br>
+₹${c.amount} | ${c.time} | ${c.status}
+</p>`;    });
+}
+
+// Trigger events (AUTO CLAIM)
+function trigger(event, amount) {
+
+    let wallet = parseInt(localStorage.getItem("wallet_" + userId));
+    wallet += amount;
+    localStorage.setItem("wallet_" + userId, wallet);
+
+    let claims = JSON.parse(localStorage.getItem("claims_" + userId));
+    claims.push({
+    event: event,
+    amount: amount,
+    time: new Date().toLocaleTimeString(),
+    status: "Approved"
+});
+    localStorage.setItem("claims_" + userId, JSON.stringify(claims));
+
+    alert(event + " disruption detected. ₹" + amount + " credited.");
+    
+    
+    updateWallet();
+    loadClaims();
+}
+
+// Initialize UI
+showPremiumStatus();
+deductWeeklyPremium();
+updateWallet();
+loadClaims();
+
+</script>
+
+</body>
+</html>
