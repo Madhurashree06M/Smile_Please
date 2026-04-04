@@ -33,7 +33,6 @@
       overflow: hidden;
     }
 
-    /* Background texture */
     body::before {
       content: '';
       position: fixed; inset: 0;
@@ -64,7 +63,6 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* ── LEFT PANEL ── */
     .panel-left {
       flex: 0 0 340px;
       background: var(--ink);
@@ -96,9 +94,7 @@
       pointer-events: none;
     }
 
-    .brand {
-      position: relative; z-index: 1;
-    }
+    .brand { position: relative; z-index: 1; }
 
     .brand-logo {
       width: 44px; height: 44px;
@@ -124,9 +120,7 @@
       font-weight: 300;
     }
 
-    .panel-copy {
-      position: relative; z-index: 1;
-    }
+    .panel-copy { position: relative; z-index: 1; }
 
     .panel-copy h2 {
       font-family: 'Syne', sans-serif;
@@ -137,9 +131,7 @@
       margin-bottom: 16px;
     }
 
-    .panel-copy h2 span {
-      color: var(--accent);
-    }
+    .panel-copy h2 span { color: var(--accent); }
 
     .panel-copy p {
       font-size: 14px;
@@ -172,7 +164,6 @@
       flex-shrink: 0;
     }
 
-    /* ── RIGHT PANEL ── */
     .panel-right {
       flex: 1;
       padding: 48px 44px;
@@ -181,9 +172,7 @@
       justify-content: center;
     }
 
-    .form-header {
-      margin-bottom: 32px;
-    }
+    .form-header { margin-bottom: 32px; }
 
     .form-header h1 {
       font-family: 'Syne', sans-serif;
@@ -193,11 +182,7 @@
       letter-spacing: -0.5px;
     }
 
-    .form-header p {
-      font-size: 14px;
-      color: var(--muted);
-      margin-top: 6px;
-    }
+    .form-header p { font-size: 14px; color: var(--muted); margin-top: 6px; }
 
     .form-grid {
       display: grid;
@@ -218,7 +203,6 @@
     .field:nth-child(4) { animation-delay: 0.20s; }
     .field:nth-child(5) { animation-delay: 0.25s; }
     .field:nth-child(6) { animation-delay: 0.30s; }
-    .field:nth-child(7) { animation-delay: 0.35s; }
 
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
@@ -235,9 +219,7 @@
       color: var(--muted);
     }
 
-    .input-wrap {
-      position: relative;
-    }
+    .input-wrap { position: relative; }
 
     .input-wrap .icon {
       position: absolute;
@@ -280,49 +262,86 @@
       pointer-events: none;
     }
 
-    /* Zone badge row */
-    .zone-row {
+    /* ── RISK ASSESSMENT CARD ── */
+    /* replaces the manual zone-badge row */
+    .risk-assessment-card {
       grid-column: 1 / -1;
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .zone-badge {
-      padding: 7px 14px;
-      border-radius: 8px;
       border: 1.5px solid var(--line);
-      font-size: 12.5px;
-      font-weight: 500;
-      color: var(--muted);
-      cursor: pointer;
-      transition: all var(--transition);
+      border-radius: 12px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      transition: border-color var(--transition), background var(--transition);
       background: var(--paper);
-      user-select: none;
+      min-height: 56px;
     }
 
-    .zone-badge:hover {
-      border-color: var(--accent);
-      color: var(--accent);
+    .risk-assessment-card.zone-a {
+      border-color: rgba(26,158,92,0.35);
+      background: rgba(26,158,92,0.04);
     }
 
-    .zone-badge.active {
-      border-color: var(--accent);
-      background: rgba(232,82,26,0.08);
-      color: var(--accent);
+    .risk-assessment-card.zone-b {
+      border-color: rgba(245,166,35,0.4);
+      background: rgba(245,166,35,0.04);
     }
 
-    .zone-label {
-      font-size: 11.5px;
+    .risk-assessment-card.zone-c {
+      border-color: rgba(232,82,26,0.35);
+      background: rgba(232,82,26,0.04);
+    }
+
+    .risk-left { display: flex; align-items: center; gap: 10px; }
+
+    .risk-spinner {
+      width: 18px; height: 18px;
+      border: 2px solid var(--line);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      flex-shrink: 0;
+      display: none;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .risk-spinner.active { display: block; }
+
+    .risk-icon { font-size: 18px; display: none; }
+    .risk-icon.active { display: block; }
+
+    .risk-text-group { display: flex; flex-direction: column; gap: 2px; }
+
+    .risk-title {
+      font-size: 13px;
       font-weight: 500;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 2px;
-      grid-column: 1 / -1;
+      color: var(--ink);
     }
 
-    /* Premium preview card */
+    .risk-sub {
+      font-size: 11.5px;
+      color: var(--muted);
+      font-weight: 300;
+    }
+
+    .risk-badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+      display: none;
+    }
+
+    .risk-badge.active { display: block; }
+    .risk-badge.low    { background: rgba(26,158,92,0.12); color: #0d7a47; }
+    .risk-badge.mod    { background: rgba(245,166,35,0.15); color: #a0720a; }
+    .risk-badge.high   { background: rgba(232,82,26,0.12); color: #b83e11; }
+
+    /* ── PREMIUM PREVIEW ── */
     .premium-preview {
       grid-column: 1 / -1;
       background: linear-gradient(135deg, var(--ink) 0%, #1e2630 100%);
@@ -363,7 +382,7 @@
       font-weight: 500;
     }
 
-    /* Submit */
+    /* ── SUBMIT ── */
     .submit-btn {
       grid-column: 1 / -1;
       padding: 14px;
@@ -383,8 +402,7 @@
 
     .submit-btn::after {
       content: '';
-      position: absolute;
-      inset: 0;
+      position: absolute; inset: 0;
       background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, transparent 60%);
       pointer-events: none;
     }
@@ -396,13 +414,9 @@
     }
 
     .submit-btn:active { transform: translateY(0); }
+    .submit-btn.loading { pointer-events: none; opacity: 0.8; }
 
-    .submit-btn.loading {
-      pointer-events: none;
-      opacity: 0.8;
-    }
-
-    /* Success overlay */
+    /* ── SUCCESS OVERLAY ── */
     .success-overlay {
       display: none;
       position: fixed; inset: 0;
@@ -446,35 +460,19 @@
       margin-bottom: 8px;
     }
 
-    .success-card p {
-      font-size: 14px;
-      color: var(--muted);
-      line-height: 1.6;
-    }
+    .success-card p { font-size: 14px; color: var(--muted); line-height: 1.6; }
 
-    .error-msg {
-      font-size: 11.5px;
-      color: #c0392b;
-      margin-top: 2px;
-      display: none;
-    }
-
-    .field.error input,
-    .field.error select {
-      border-color: #c0392b;
-      box-shadow: 0 0 0 3px rgba(192,57,43,0.1);
-    }
-
+    .error-msg { font-size: 11.5px; color: #c0392b; margin-top: 2px; display: none; }
+    .field.error input, .field.error select { border-color: #c0392b; box-shadow: 0 0 0 3px rgba(192,57,43,0.1); }
     .field.error .error-msg { display: block; }
 
-    /* Responsive */
     @media (max-width: 720px) {
       .page-layout { flex-direction: column; max-width: 440px; }
       .panel-left { flex: none; padding: 32px 28px; }
       .panel-right { padding: 32px 28px; }
       .form-grid { grid-template-columns: 1fr; }
       .field.full { grid-column: 1; }
-      .zone-row, .premium-preview, .submit-btn { grid-column: 1; }
+      .risk-assessment-card, .premium-preview, .submit-btn { grid-column: 1; }
     }
   </style>
 </head>
@@ -498,7 +496,7 @@
     <ul class="features-list">
       <li><span class="feat-dot"></span> Dynamic weekly premiums from ₹18</li>
       <li><span class="feat-dot"></span> Auto-claim on weather disruptions</li>
-      <li><span class="feat-dot"></span> Zone-based risk scoring</li>
+      <li><span class="feat-dot"></span> AI-assessed zone-based risk scoring</li>
       <li><span class="feat-dot"></span> Coverage active within minutes</li>
     </ul>
   </div>
@@ -532,12 +530,13 @@
         <span class="error-msg">Enter a valid 10-digit number</span>
       </div>
 
-      <!-- City -->
+      <!-- City — now drives ML risk scoring -->
       <div class="field" id="field-city">
         <label>City</label>
         <div class="input-wrap">
           <span class="icon">🏙️</span>
-          <input type="text" id="city" placeholder="e.g. Bengaluru" autocomplete="address-level2"/>
+          <input type="text" id="city" placeholder="e.g. Bengaluru" autocomplete="address-level2"
+                 oninput="onCityInput()" onblur="assessRisk()"/>
         </div>
         <span class="error-msg">Please enter your city</span>
       </div>
@@ -560,7 +559,7 @@
         <span class="error-msg">Please select your platform</span>
       </div>
 
-      <!-- Job Role — NEW: required for policy type -->
+      <!-- Job Role -->
       <div class="field" id="field-role">
         <label>Job Role</label>
         <div class="input-wrap select-wrap">
@@ -576,7 +575,7 @@
         <span class="error-msg">Please select your job role</span>
       </div>
 
-      <!-- Aadhaar (last 4) — NEW: for identity verification -->
+      <!-- Aadhaar (last 4) -->
       <div class="field" id="field-aadhaar">
         <label>Aadhaar (Last 4 digits)</label>
         <div class="input-wrap">
@@ -586,15 +585,20 @@
         <span class="error-msg">Enter last 4 digits of Aadhaar</span>
       </div>
 
-      <!-- Risk Zone — NEW: feeds dynamic premium engine -->
-      <div class="zone-label full">Risk Zone <span style="font-size:10px; color:#aaa; text-transform:none; letter-spacing:0; font-weight:400;">(affects your weekly premium)</span></div>
-      <div class="zone-row full" id="zoneRow">
-        <div class="zone-badge active" data-zone="A" onclick="selectZone(this)">🟢 Zone A — Low Risk</div>
-        <div class="zone-badge" data-zone="B" onclick="selectZone(this)">🟡 Zone B — Moderate</div>
-        <div class="zone-badge" data-zone="C" onclick="selectZone(this)">🔴 Zone C — High Risk</div>
+      <!-- ── AI RISK ASSESSMENT CARD (replaces manual zone badges) ── -->
+      <div class="risk-assessment-card full" id="riskCard">
+        <div class="risk-left">
+          <div class="risk-spinner" id="riskSpinner"></div>
+          <div class="risk-icon" id="riskIcon">🟢</div>
+          <div class="risk-text-group">
+            <div class="risk-title" id="riskTitle">Risk zone assessed automatically</div>
+            <div class="risk-sub" id="riskSub">Enter your city above to see your zone</div>
+          </div>
+        </div>
+        <div class="risk-badge" id="riskBadge">Zone A</div>
       </div>
 
-      <!-- Dynamic Premium Preview — NEW: shows calculated premium in real time -->
+      <!-- Premium Preview -->
       <div class="premium-preview full">
         <div>
           <div class="label">Estimated Weekly Premium</div>
@@ -622,31 +626,169 @@
 </div>
 
 <script>
-  /* ── DYNAMIC PREMIUM ENGINE ── */
-  const BASE_PREMIUMS = { Swiggy: 22, Zomato: 22, Zepto: 20, Blinkit: 20, Dunzo: 18, Porter: 24, '': 20 };
-  const ROLE_SURCHARGE = { delivery_bike: 0, delivery_cycle: -2, delivery_foot: -3, pickup: -1, '': 0 };
-  const ZONE_DISCOUNT  = { A: -2, B: 0, C: 3 };
-  const ZONE_TAGS      = { A: '🟢 Safe Zone Discount', B: '⚡ AI Calculated', C: '⚠️ High Risk Zone' };
+  /* ══════════════════════════════════════════════
+     ML-STYLE CITY → RISK ZONE LOOKUP
+     In production: replace this with a real API call
+     to a model trained on accident rates, weather
+     disruption history, traffic density & claim data.
+     Each city entry has:
+       zone    — A (low) | B (moderate) | C (high)
+       reason  — short human-readable rationale
+  ══════════════════════════════════════════════ */
+  const CITY_RISK_MODEL = {
+    // Zone A — Low risk: smaller cities, lower traffic density, fewer extreme weather events
+    'mysuru':        { zone: 'A', reason: 'Low traffic density · Stable weather' },
+    'mysore':        { zone: 'A', reason: 'Low traffic density · Stable weather' },
+    'coimbatore':    { zone: 'A', reason: 'Moderate climate · Lower congestion' },
+    'indore':        { zone: 'A', reason: 'Well-planned roads · Low flood risk' },
+    'bhopal':        { zone: 'A', reason: 'Low claim frequency · Stable climate' },
+    'chandigarh':    { zone: 'A', reason: 'Planned city · Low disruption history' },
+    'jaipur':        { zone: 'A', reason: 'Low rainfall · Manageable congestion' },
+    'surat':         { zone: 'A', reason: 'Lower congestion vs tier-1 · Dry climate' },
+    'vadodara':      { zone: 'A', reason: 'Lower congestion vs tier-1 · Dry climate' },
+    'nashik':        { zone: 'A', reason: 'Moderate risk · Low claim rate' },
+    'nagpur':        { zone: 'A', reason: 'Moderate climate · Good road coverage' },
+    'ludhiana':      { zone: 'A', reason: 'Lower urban density · Stable routes' },
+    'agra':          { zone: 'A', reason: 'Moderate density · Lower storm risk' },
+    'rajkot':        { zone: 'A', reason: 'Dry climate · Lower accident frequency' },
+    'visakhapatnam': { zone: 'A', reason: 'Moderate traffic · Some cyclone exposure' },
+    'vizag':         { zone: 'A', reason: 'Moderate traffic · Some cyclone exposure' },
+    'kochi':         { zone: 'A', reason: 'Moderate rain · Manageable flood risk' },
+    'cochin':        { zone: 'A', reason: 'Moderate rain · Manageable flood risk' },
 
-  let selectedZone = 'A';
+    // Zone B — Moderate risk: major metros with heavy traffic or seasonal disruptions
+    'bengaluru':     { zone: 'B', reason: 'High congestion · Seasonal flooding' },
+    'bangalore':     { zone: 'B', reason: 'High congestion · Seasonal flooding' },
+    'hyderabad':     { zone: 'B', reason: 'High traffic · Flash flood risk' },
+    'pune':          { zone: 'B', reason: 'Dense traffic · Monsoon disruptions' },
+    'ahmedabad':     { zone: 'B', reason: 'Dense roads · Heat-wave disruptions' },
+    'lucknow':       { zone: 'B', reason: 'Moderate density · Fog disruptions (winter)' },
+    'kanpur':        { zone: 'B', reason: 'High density · Frequent waterlogging' },
+    'patna':         { zone: 'B', reason: 'Flood-prone zone · High density' },
+    'bhubaneswar':   { zone: 'B', reason: 'Cyclone corridor · Moderate density' },
+    'thiruvananthapuram': { zone: 'B', reason: 'Heavy monsoon · Coastal risk' },
+    'guwahati':      { zone: 'B', reason: 'Flood-prone · Landslide season risk' },
+    'srinagar':      { zone: 'B', reason: 'Snow disruptions · Flood history' },
 
-  function selectZone(el) {
-    document.querySelectorAll('.zone-badge').forEach(b => b.classList.remove('active'));
-    el.classList.add('active');
-    selectedZone = el.dataset.zone;
+    // Zone C — High risk: top-density metros with severe congestion, flooding, or extreme weather
+    'mumbai':        { zone: 'C', reason: 'Extreme congestion · High flood risk' },
+    'bombay':        { zone: 'C', reason: 'Extreme congestion · High flood risk' },
+    'delhi':         { zone: 'C', reason: 'Extreme traffic · Air quality disruptions' },
+    'new delhi':     { zone: 'C', reason: 'Extreme traffic · Air quality disruptions' },
+    'chennai':       { zone: 'C', reason: 'Cyclone exposure · Heavy monsoon flooding' },
+    'madras':        { zone: 'C', reason: 'Cyclone exposure · Heavy monsoon flooding' },
+    'kolkata':       { zone: 'C', reason: 'High flood risk · Dense urban routes' },
+    'calcutta':      { zone: 'C', reason: 'High flood risk · Dense urban routes' },
+  };
+
+  const ZONE_CONFIG = {
+    A: { icon: '🟢', label: 'Zone A — Low Risk',      badgeClass: 'low', cardClass: 'zone-a', tag: '🟢 Safe Zone Discount', discount: -2 },
+    B: { icon: '🟡', label: 'Zone B — Moderate Risk', badgeClass: 'mod', cardClass: 'zone-b', tag: '⚡ AI Calculated',        discount: 0  },
+    C: { icon: '🔴', label: 'Zone C — High Risk',     badgeClass: 'high', cardClass: 'zone-c', tag: '⚠️ High Risk Zone',      discount: 3  },
+  };
+
+  const BASE_PREMIUMS   = { Swiggy: 22, Zomato: 22, Zepto: 20, Blinkit: 20, Dunzo: 18, Porter: 24, '': 20 };
+  const ROLE_SURCHARGE  = { delivery_bike: 0, delivery_cycle: -2, delivery_foot: -3, pickup: -1, '': 0 };
+
+  let currentZone      = null;   // set by assessRisk()
+  let riskAssessTimer  = null;   // debounce handle
+
+  /* ── CITY INPUT HANDLER — triggers risk UI on typing ── */
+  function onCityInput() {
+    clearTimeout(riskAssessTimer);
+    const city = document.getElementById('city').value.trim();
+    if (city.length < 2) { resetRiskCard(); return; }
+    showRiskSpinner();
+    // debounce 600ms so we're not firing on every keystroke
+    riskAssessTimer = setTimeout(assessRisk, 600);
+  }
+
+  /* ── MAIN RISK ASSESSMENT FUNCTION ── */
+  function assessRisk() {
+    const raw  = document.getElementById('city').value.trim();
+    const key  = raw.toLowerCase();
+    const match = CITY_RISK_MODEL[key];
+
+    if (!match) {
+      // City not in model — default to Zone B with a note
+      applyZone('B', raw, 'Unrecognised city — defaulting to moderate risk');
+    } else {
+      applyZone(match.zone, raw, match.reason);
+    }
     updatePremium();
   }
 
+  function applyZone(zone, cityName, reason) {
+    currentZone = zone;
+    const cfg   = ZONE_CONFIG[zone];
+    const card  = document.getElementById('riskCard');
+    const spinner = document.getElementById('riskSpinner');
+    const icon  = document.getElementById('riskIcon');
+    const title = document.getElementById('riskTitle');
+    const sub   = document.getElementById('riskSub');
+    const badge = document.getElementById('riskBadge');
+
+    // Stop spinner
+    spinner.classList.remove('active');
+    icon.textContent = cfg.icon;
+    icon.classList.add('active');
+
+    title.textContent = cfg.label;
+    sub.textContent   = reason;
+
+    badge.textContent = 'Zone ' + zone;
+    badge.className   = 'risk-badge active ' + cfg.badgeClass;
+
+    // Swap card colour
+    card.className = 'risk-assessment-card full ' + cfg.cardClass;
+  }
+
+  function showRiskSpinner() {
+    const card    = document.getElementById('riskCard');
+    const spinner = document.getElementById('riskSpinner');
+    const icon    = document.getElementById('riskIcon');
+    const title   = document.getElementById('riskTitle');
+    const sub     = document.getElementById('riskSub');
+    const badge   = document.getElementById('riskBadge');
+
+    card.className = 'risk-assessment-card full';
+    spinner.classList.add('active');
+    icon.classList.remove('active');
+    badge.classList.remove('active');
+    title.textContent = 'Assessing risk…';
+    sub.textContent   = 'Checking city data';
+  }
+
+  function resetRiskCard() {
+    currentZone = null;
+    const card  = document.getElementById('riskCard');
+    const spinner = document.getElementById('riskSpinner');
+    const icon  = document.getElementById('riskIcon');
+    const title = document.getElementById('riskTitle');
+    const sub   = document.getElementById('riskSub');
+    const badge = document.getElementById('riskBadge');
+
+    card.className = 'risk-assessment-card full';
+    spinner.classList.remove('active');
+    icon.classList.remove('active');
+    badge.classList.remove('active');
+    title.textContent = 'Risk zone assessed automatically';
+    sub.textContent   = 'Enter your city above to see your zone';
+    updatePremium();
+  }
+
+  /* ── PREMIUM ENGINE ── */
   function updatePremium() {
-    const platform = document.getElementById('type').value;
-    const role     = document.getElementById('role').value;
-    const base     = BASE_PREMIUMS[platform] || 20;
-    const surcharge = ROLE_SURCHARGE[role] || 0;
-    const discount  = ZONE_DISCOUNT[selectedZone];
-    const total     = Math.max(10, base + surcharge + discount);
+    const platform   = document.getElementById('type').value;
+    const role       = document.getElementById('role').value;
+    const base       = BASE_PREMIUMS[platform] || 20;
+    const surcharge  = ROLE_SURCHARGE[role] || 0;
+    const discount   = currentZone ? ZONE_CONFIG[currentZone].discount : 0;
+    const total      = Math.max(10, base + surcharge + discount);
+    const tag        = currentZone ? ZONE_CONFIG[currentZone].tag : '⚡ AI Calculated';
 
     document.getElementById('premiumDisplay').innerHTML = `₹${total} <span>/ week</span>`;
-    document.getElementById('premiumTag').textContent = ZONE_TAGS[selectedZone];
+    document.getElementById('premiumTag').textContent = tag;
   }
 
   /* ── VALIDATION ── */
@@ -674,10 +816,12 @@
 
     if (!(v1 && v2 && v3 && v4 && v5 && v6)) return;
 
-    // Build premium
+    // Ensure risk has been assessed (city entered and model ran)
+    if (!currentZone) { assessRisk(); }
+
     const base      = BASE_PREMIUMS[type] || 20;
     const surcharge = ROLE_SURCHARGE[role] || 0;
-    const discount  = ZONE_DISCOUNT[selectedZone];
+    const discount  = ZONE_CONFIG[currentZone || 'B'].discount;
     const premium   = Math.max(10, base + surcharge + discount);
 
     const user = {
@@ -685,7 +829,7 @@
       platform: type,
       role,
       aadhaarLast4: aadhaar,
-      riskZone: selectedZone,
+      riskZone: currentZone || 'B',
       weeklyPremium: premium,
       registeredAt: new Date().toISOString(),
       policyId: 'WS-' + Date.now(),
@@ -694,7 +838,6 @@
 
     localStorage.setItem('user', JSON.stringify(user));
 
-    // Show success
     const btn = document.getElementById('submitBtn');
     btn.textContent = 'Registering…';
     btn.classList.add('loading');
@@ -705,7 +848,7 @@
     }, 700);
   }
 
-  // Live phone formatting — digits only
+  /* ── DIGIT-ONLY INPUTS ── */
   document.getElementById('phone').addEventListener('input', function() {
     this.value = this.value.replace(/\D/g, '');
   });
